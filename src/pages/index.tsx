@@ -33,8 +33,10 @@ interface HomeProps {
 export default function Home({ postsPagination }: HomeProps) {
   return (
     <>
+      <header className={styles.header}>
+        <img src="/images/logo.svg" alt="logo" />
+      </header>
       <main className={styles.container}>
-        {/* <img src="/images/logo.svg" alt="logo" /> */}
         <div className={styles.posts}>
           {postsPagination.results.map(post => (
             <Link href={`/post/${post.uid}`} key={post.uid}>
@@ -96,3 +98,57 @@ export const getStaticProps: GetStaticProps = async () => {
 
 /* postsResponse SAMPLE
 
+{
+  "page": 1,
+  "results_per_page": 20,
+  "results_size": 2,
+  "total_results_size": 2,
+  "total_pages": 1,
+  "next_page": null,
+  "prev_page": null,
+  "results": [
+    {
+      "id": "YGhpkBMAACMAbBdz",
+      "uid": "como-utilizar-hooks",
+      "type": "posts",
+      "href": "https://spacenew.cdn.prismic.io/api/v2/documents/search?ref=YGhuCBMAACEAbCuG&q=%5B%5B%3Ad+%3D+at%28document.id%2C+%22YGhpkBMAACMAbBdz%22%29+%5D%5D",
+      "tags": [],
+      "first_publication_date": "2021-04-03T13:12:45+0000",
+      "last_publication_date": "2021-04-03T13:30:48+0000",
+      "slugs": [
+        "como-utilizar-hooks",
+        "criando-um-app-cra-do-zero"
+      ],
+      "linked_documents": [],
+      "lang": "pt-br",
+      "alternate_languages": [],
+      "data": {
+        "title": "Como utilizar Hooks",
+        "subtitle": "Pensando em sincronização em vez de ciclos de vida."
+      }
+    },
+    {
+      "id": "YGhpdRMAACAAbBby",
+      "uid": "criando-um-app-cra-do-zero",
+      "type": "posts",
+      "href": "https://spacenew.cdn.prismic.io/api/v2/documents/search?ref=YGhuCBMAACEAbCuG&q=%5B%5B%3Ad+%3D+at%28document.id%2C+%22YGhpdRMAACAAbBby%22%29+%5D%5D",
+      "tags": [],
+      "first_publication_date": "2021-04-03T13:11:36+0000",
+      "last_publication_date": "2021-04-03T13:11:36+0000",
+      "slugs": [
+        "criando-um-app-cra-do-zero"
+      ],
+      "linked_documents": [],
+      "lang": "pt-br",
+      "alternate_languages": [],
+      "data": {
+        "title": "Criando um app CRA do zero",
+        "subtitle": "Tudo sobre como criar a sua primeira aplicação utilizando Create React App"
+      }
+    }
+  ],
+  "version": "fbb44a3",
+  "license": "All Rights Reserved"
+}
+
+*/

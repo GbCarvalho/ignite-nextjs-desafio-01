@@ -42,12 +42,24 @@
       }
     }
   }
+
+  button {
+    border: 0;
+    background: 0;
+    color: var(--pink-500);
+    font-weight: 600;
+    margin: 64px 0 80px;
+  }
 }
 
-.loadMore {
-  border: 0;
-  margin: 4rem 0 5rem;
-  background: transparent;
-  font-weight: 700;
-  color: var(--pink-500);
+.header {
+  max-width: 720px;
+  margin: 5rem auto 0;
+
+  img {
+    border: 0;
+    background: transparent;
+    font-weight: 700;
+    color: var(--pink-500);
+  }
 }
