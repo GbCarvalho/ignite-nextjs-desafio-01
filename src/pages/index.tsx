@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 
 import Prismic from '@prismicio/client';
+import { useEffect, useState } from 'react';
 import { getPrismicClient } from '../services/prismic';
 
 import commonStyles from '../styles/common.module.scss';
@@ -31,6 +32,23 @@ interface HomeProps {
 }
 
 export default function Home({ postsPagination }: HomeProps) {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [nextPage, setNextPage] = useState<string | null>(null);
+
+  async function fetchPosts(receivedNextPage: string): Promise<void> {
+    fetch(receivedNextPage)
+      .then(response => response.json())
+      .then(data => {
+        setPosts([...posts, ...data.results]);
+        setNextPage(data.next_page);
+      });
+  }
+
+  useEffect(() => {
+    setPosts([...posts, ...postsPagination.results]);
+    setNextPage(postsPagination.next_page);
+  }, [postsPagination.results, postsPagination.next_page]);
+
   return (
     <>
       <header className={styles.header}>
@@ -38,7 +56,7 @@ export default function Home({ postsPagination }: HomeProps) {
       </header>
       <main className={styles.container}>
         <div className={styles.posts}>
-          {postsPagination.results.map(post => (
+          {posts.map(post => (
             <Link href={`/post/${post.uid}`} key={post.uid}>
               <a>
                 <h1>{post.data.title}</h1>
@@ -62,8 +80,12 @@ export default function Home({ postsPagination }: HomeProps) {
             </Link>
           ))}
 
-          {postsPagination.next_page ? (
-            <button className={styles.loadMore} type="button">
+          {nextPage ? (
+            <button
+              className={styles.loadMore}
+              type="button"
+              onClick={() => fetchPosts(postsPagination.next_page)}
+            >
               Carregar mais posts
             </button>
           ) : (

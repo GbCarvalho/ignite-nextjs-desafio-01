@@ -2,7 +2,6 @@
 .container {
   max-width: 720px;
   margin: 0 auto;
-  padding-top: 5rem;
 }
 
 .posts {
@@ -50,11 +49,15 @@
     font-weight: 600;
     margin: 64px 0 80px;
   }
+
+  &:last-child {
+    margin: 0 0 64px;
+  }
 }
 
 .header {
   max-width: 720px;
-  margin: 5rem auto 0;
+  margin: 5rem auto 4rem;
 
   img {
     border: 0;
