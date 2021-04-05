@@ -1,1 +1,68 @@
 // TODO
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.posts {
+  max-width: 720px;
+  margin: 4rem auto 0;
+
+  a {
+    display: block;
+    cursor: default;
+
+    h1 {
+      cursor: pointer;
+      margin-bottom: 0.5rem;
+      transition: color 0.2s;
+
+      &:hover {
+        color: var(--pink-500);
+      }
+    }
+
+    & + a {
+      margin-top: 48px;
+    }
+
+    span {
+      display: flex;
+      margin-top: 23px;
+      align-items: center;
+      color: var(--gray-700);
+
+      svg {
+        margin-right: 8px;
+      }
+
+      time {
+        margin-right: 26px;
+      }
+    }
+  }
+
+  button {
+    border: 0;
+    background: 0;
+    color: var(--pink-500);
+    font-weight: 600;
+    margin: 64px 0 80px;
+  }
+
+  &:last-child {
+    margin: 0 0 64px;
+  }
+}
+
+.header {
+  max-width: 720px;
+  margin: 5rem auto 4rem;
+
+  img {
+    border: 0;
+    background: transparent;
+    font-weight: 700;
+    color: var(--pink-500);
+  }
+}
