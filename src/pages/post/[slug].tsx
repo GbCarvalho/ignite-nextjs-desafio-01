@@ -1,17 +1,15 @@
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { GetStaticPaths, GetStaticProps } from 'next';
 import { useRouter } from 'next/router';
 import { RichText } from 'prismic-dom';
-import Prismic from '@prismicio/client';
+import { GetStaticPaths, GetStaticProps } from 'next';
 
 import { FiClock, FiCalendar, FiUser } from 'react-icons/fi';
+import { useEffect } from 'react';
 import Header from '../../components/Header';
 
-import { getPrismicClient } from '../../services/prismic';
-
-import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
+import { getPrismicClient } from '../../services/prismic';
 
 interface Post {
   first_publication_date: string | null;
@@ -36,6 +34,25 @@ interface PostProps {
 
 export default function Post({ post }: PostProps) {
   const router = useRouter();
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    const anchor = document.getElementById('comments');
+
+    script.setAttribute('src', 'https://utteranc.es/client.js');
+    script.setAttribute('crossorigin', 'anonymous');
+    script.setAttribute('async', 'true');
+    script.setAttribute(
+      'repo',
+      'GbCarvalho/utterances-comments-spacetravelling-web'
+    );
+    script.setAttribute('issue-term', 'pathname');
+    script.setAttribute('theme', 'photon-dark');
+
+    if (anchor && script) {
+      anchor.appendChild(script);
+    }
+  }, [router.isFallback]);
 
   if (router.isFallback) {
     return <div>Carregando...</div>;
@@ -88,6 +105,8 @@ export default function Post({ post }: PostProps) {
               </div>
             ))}
           </div>
+
+          <footer id="comments" />
         </div>
       </main>
     </>
@@ -95,21 +114,12 @@ export default function Post({ post }: PostProps) {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const prismic = getPrismicClient();
-  const posts = await prismic.query(
-    [Prismic.predicates.at('document.type', 'posts')],
-    {
-      fetch: ['posts.title'],
-      pageSize: 20,
-    }
-  );
-
   return {
     paths: [
       { params: { slug: 'como-utilizar-hooks' } },
       { params: { slug: 'criando-um-app-cra-do-zero' } },
     ],
-    fallback: 'true',
+    fallback: true,
   };
 };
 
