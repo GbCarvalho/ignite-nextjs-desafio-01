@@ -3,6 +3,15 @@
   margin: 0 auto;
 }
 
+.edittedAt {
+  font-size: 14px;
+  margin-top: 16px;
+  time {
+    color: var(--gray-700);
+    font-style: italic;
+  }
+}
+
 .post {
   max-width: 720px;
   margin: 80px auto 0;
