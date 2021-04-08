@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { GetStaticProps } from 'next';
-import { Head } from 'next/document';
 import { FiCalendar, FiUser } from 'react-icons/fi';
 import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
@@ -9,7 +8,6 @@ import Prismic from '@prismicio/client';
 import { useEffect, useState } from 'react';
 import { getPrismicClient } from '../services/prismic';
 
-import commonStyles from '../styles/common.module.scss';
 import styles from './home.module.scss';
 
 interface Post {
@@ -29,9 +27,13 @@ interface PostPagination {
 
 interface HomeProps {
   postsPagination: PostPagination;
+  preview: boolean;
 }
 
-export default function Home({ postsPagination }: HomeProps) {
+export default function Home({
+  postsPagination,
+  preview,
+}: HomeProps): JSX.Element {
   const [posts, setPosts] = useState<Post[]>([]);
   const [nextPage, setNextPage] = useState<string | null>(null);
 
@@ -45,7 +47,7 @@ export default function Home({ postsPagination }: HomeProps) {
   }
 
   useEffect(() => {
-    setPosts([...posts, ...postsPagination.results]);
+    setPosts([...postsPagination.results]);
     setNextPage(postsPagination.next_page);
   }, [postsPagination.results, postsPagination.next_page]);
 
@@ -80,30 +82,44 @@ export default function Home({ postsPagination }: HomeProps) {
             </Link>
           ))}
 
-          {nextPage ? (
-            <button
-              className={styles.loadMore}
-              type="button"
-              onClick={() => fetchPosts(postsPagination.next_page)}
-            >
-              Carregar mais posts
-            </button>
-          ) : (
-            ''
-          )}
+          <footer>
+            {nextPage ? (
+              <button
+                className={styles.loadMore}
+                type="button"
+                onClick={() => fetchPosts(postsPagination.next_page)}
+              >
+                Carregar mais posts
+              </button>
+            ) : (
+              ''
+            )}
+
+            {preview && (
+              <aside>
+                <Link href="/api/exit-preview">
+                  <a>Sair do modo Preview</a>
+                </Link>
+              </aside>
+            )}
+          </footer>
         </div>
       </main>
     </>
   );
 }
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getStaticProps: GetStaticProps<HomeProps> = async ({
+  preview = false,
+  previewData,
+}) => {
   const prismic = getPrismicClient();
   const { results, next_page } = await prismic.query(
     [Prismic.predicates.at('document.type', 'posts')],
     {
       fetch: ['posts.title', 'posts.subtitle', 'posts.author'],
       pageSize: 2,
+      ref: previewData?.ref ?? null,
     }
   );
 
@@ -113,64 +129,8 @@ export const getStaticProps: GetStaticProps = async () => {
         next_page,
         results,
       },
+      preview,
     },
     revalidate: 60 * 60 * 10, // 10 minutes
   };
 };
-
-/* postsResponse SAMPLE
-
-{
-  "page": 1,
-  "results_per_page": 20,
-  "results_size": 2,
-  "total_results_size": 2,
-  "total_pages": 1,
-  "next_page": null,
-  "prev_page": null,
-  "results": [
-    {
-      "id": "YGhpkBMAACMAbBdz",
-      "uid": "como-utilizar-hooks",
-      "type": "posts",
-      "href": "https://spacenew.cdn.prismic.io/api/v2/documents/search?ref=YGhuCBMAACEAbCuG&q=%5B%5B%3Ad+%3D+at%28document.id%2C+%22YGhpkBMAACMAbBdz%22%29+%5D%5D",
-      "tags": [],
-      "first_publication_date": "2021-04-03T13:12:45+0000",
-      "last_publication_date": "2021-04-03T13:30:48+0000",
-      "slugs": [
-        "como-utilizar-hooks",
-        "criando-um-app-cra-do-zero"
-      ],
-      "linked_documents": [],
-      "lang": "pt-br",
-      "alternate_languages": [],
-      "data": {
-        "title": "Como utilizar Hooks",
-        "subtitle": "Pensando em sincronização em vez de ciclos de vida."
-      }
-    },
-    {
-      "id": "YGhpdRMAACAAbBby",
-      "uid": "criando-um-app-cra-do-zero",
-      "type": "posts",
-      "href": "https://spacenew.cdn.prismic.io/api/v2/documents/search?ref=YGhuCBMAACEAbCuG&q=%5B%5B%3Ad+%3D+at%28document.id%2C+%22YGhpdRMAACAAbBby%22%29+%5D%5D",
-      "tags": [],
-      "first_publication_date": "2021-04-03T13:11:36+0000",
-      "last_publication_date": "2021-04-03T13:11:36+0000",
-      "slugs": [
-        "criando-um-app-cra-do-zero"
-      ],
-      "linked_documents": [],
-      "lang": "pt-br",
-      "alternate_languages": [],
-      "data": {
-        "title": "Criando um app CRA do zero",
-        "subtitle": "Tudo sobre como criar a sua primeira aplicação utilizando Create React App"
-      }
-    }
-  ],
-  "version": "fbb44a3",
-  "license": "All Rights Reserved"
-}
-
-*/

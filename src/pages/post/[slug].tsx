@@ -15,6 +15,7 @@ import styles from './post.module.scss';
 
 interface Post {
   first_publication_date: string | null;
+  last_publication_date: string | null;
   data: {
     title: string;
     banner: {
@@ -34,7 +35,7 @@ interface PostProps {
   post: Post;
 }
 
-export default function Post({ post }: PostProps) {
+export default function Post({ post }: PostProps): JSX.Element {
   const router = useRouter();
 
   if (router.isFallback) {
@@ -68,11 +69,27 @@ export default function Post({ post }: PostProps) {
                       ' '
                     ).length;
 
-                    return (totalCharacters += characters);
+                    totalCharacters += characters;
+
+                    return totalCharacters;
                   }, 0) / 200
                 )} min`}
               </time>
             </span>
+            {post.first_publication_date !== post.last_publication_date && (
+              <div className={styles.edittedAt}>
+                <time>
+                  * editado em{' '}
+                  {format(new Date(post.last_publication_date), 'dd LLL yyyy', {
+                    locale: ptBR,
+                  })}{' '}
+                  às{' '}
+                  {format(new Date(post.last_publication_date), 'HH:mm', {
+                    locale: ptBR,
+                  })}
+                </time>
+              </div>
+            )}
           </header>
 
           <div>
@@ -81,6 +98,7 @@ export default function Post({ post }: PostProps) {
                 <h1>{part.heading}</h1>
 
                 <div
+                  // eslint-disable-next-line react/no-danger
                   dangerouslySetInnerHTML={{
                     __html: RichText.asHtml(part.body),
                   }}
@@ -109,7 +127,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
       { params: { slug: 'como-utilizar-hooks' } },
       { params: { slug: 'criando-um-app-cra-do-zero' } },
     ],
-    fallback: 'true',
+    fallback: true,
   };
 };
 
