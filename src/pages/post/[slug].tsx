@@ -8,7 +8,6 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import { FiClock, FiCalendar, FiUser } from 'react-icons/fi';
 import { useEffect } from 'react';
 import Link from 'next/link';
-import { stringify } from 'node:querystring';
 import Header from '../../components/Header';
 
 import styles from './post.module.scss';
