@@ -57,7 +57,7 @@ export default function Post({
 
     script.setAttribute('src', 'https://utteranc.es/client.js');
     script.setAttribute('crossorigin', 'anonymous');
-    script.setAttribute('async', 'true');
+    script.async = true;
     script.setAttribute(
       'repo',
       'GbCarvalho/utterances-comments-spacetravelling-web'
@@ -68,11 +68,11 @@ export default function Post({
     if (anchor && script) {
       anchor.appendChild(script);
     }
-  }, [router.isFallback]);
 
-  if (router.isFallback) {
-    return <div>Carregando...</div>;
-  }
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, [router.isFallback]);
 
   return (
     <>
@@ -108,20 +108,25 @@ export default function Post({
                 )} min`}
               </time>
             </span>
-            {post.first_publication_date !== post.last_publication_date && (
-              <div className={styles.edittedAt}>
-                <time>
-                  * editado em{' '}
-                  {format(new Date(post.last_publication_date), 'dd LLL yyyy', {
-                    locale: ptBR,
-                  })}{' '}
-                  às{' '}
-                  {format(new Date(post.last_publication_date), 'HH:mm', {
-                    locale: ptBR,
-                  })}
-                </time>
-              </div>
-            )}
+            {post.last_publication_date &&
+              post.first_publication_date !== post.last_publication_date && (
+                <div className={styles.edittedAt}>
+                  <time>
+                    * editado em{' '}
+                    {format(
+                      new Date(post.last_publication_date),
+                      'dd LLL yyyy',
+                      {
+                        locale: ptBR,
+                      }
+                    )}{' '}
+                    às{' '}
+                    {format(new Date(post.last_publication_date), 'HH:mm', {
+                      locale: ptBR,
+                    })}
+                  </time>
+                </div>
+              )}
           </header>
 
           <div>
@@ -171,7 +176,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
       { params: { slug: 'como-utilizar-hooks' } },
       { params: { slug: 'criando-um-app-cra-do-zero' } },
     ],
-    fallback: true,
+    fallback: 'blocking',
   };
 };
 
